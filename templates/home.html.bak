@@ -1,0 +1,106 @@
+{% extends "common/base.html" %}
+{% block title %}
+   OpsAdmin | 运维管理
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+	       <li><a></a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!--  ##################################################################### -->
+<script language="javascript" type="text/javascript" src="/static/static/flot/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="/static/static/flot/jquery.flot.time.js"></script>
+<script language="javascript" type="text/javascript" src="/static/static/flot/jquery.flot.selection.js"></script>
+<script language="javascript" type="text/javascript" src="/static/static/flot/jquery.flot.spline.js"></script>
+<script language="javascript" type="text/javascript" src="/static/static/flot/jquery.flot.stack.js"></script>
+
+<div id="placeholder" style="width:860px;height:400px;"></div>
+
+<script type="text/javascript">
+$(function () {    
+var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];    
+
+$.plot($("#placeholder"), [
+	{ 
+	data: [[new Date(2010,10, 1,10,01),2], 
+	       [new Date(2010,10, 1,10,02),5], 
+	       [new Date(2010,10, 1,10,03),5], 
+	       [new Date(2010,10, 1,10,04),5], 
+	       [new Date(2010,10, 1,10,05),6], 
+	       [new Date(2010,10, 1,10,06),5], 
+	       [new Date(2010,10, 1,10,07),5], 
+	       [new Date(2010,10, 1,10,08),8], 
+	       [new Date(2010,10, 1,10,09),5], 
+	    ],label:"test" }
+
+	],
+        {
+        lines: {                                                                                   
+                show: true                                                                             
+        },                                                                                         
+        points: {                                                                                  
+                show: true,                                                                            
+                radius: 0.2,                                                                           
+                lineWidth: 1,                                                                          
+                fill:true,                                                                             
+                fillColor: "rgba(215, 234, 252, 0.8)"                                                  
+        },                                                                                         
+        xaxis: {                                                                                   
+                mode: 'time',
+		timeformat:"%H:%M:%S", 
+                timezone: 'browser',                                                                   
+                color: "#385050",                                                                      
+                font: {                                                                                
+                  size: 10,                                                                            
+                  weight: "bold",                                                                      
+                  color: "#385050",                                                                    
+                  family: "sans-serif",                                                                
+                  variant: "small-caps"                                                                
+                }                                                                                      
+        },                                                                                         
+        series: {                                                                                  
+                shadowSize: 0                         
+        },                                                                                         
+        yaxis: {                                                                                   
+                color: "#385050",                                                                      
+                font: {                                                                                
+                  size: 10,                                                                            
+                  weight: "bold",                                                                      
+                  color: "#385050",                                                                    
+                  family: "sans-serif",                                                                
+                  variant: "small-caps"                                                                
+              }                                                                                      
+        }, 
+        selection: {                                                                               
+                mode: "x"                                                                              
+        },                                                                                         
+        grid: {                                                                                    
+                hoverable:true,
+                clickable:true,		
+                borderWidth: 0.5,                                                                      
+                borderColor: "#3c6565",
+        } 
+
+
+}
+);
+
+});
+
+//alert("You clicked at " + pos.x + ", " + pos.y);
+//if (item) {
+//highlight(item.series, item.datapoint);
+//alert("You clicked a point!");
+// }
+
+</script>
+
+
+{% endblock %}

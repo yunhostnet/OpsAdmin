@@ -1,0 +1,177 @@
+{% extends "common/base.html" %}
+{% block title %}
+   系统配置 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a>其它管理</a></li>
+               <li><a>系统配置</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!-- ############################################################################################# -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+	            <h5>配置信息</h5>
+                </div>
+				
+	    <div class="ibox-content">
+                {% if msg %}
+                    <div class="alert alert-success text-center">{{ msg }}</div>
+                {% endif %}
+                {% if err %}
+                    <div class="alert alert-warning text-center">{{ err }}</div>
+                {% endif %}
+               <form id="userForm" class="form-horizontal" role="form" action="" method="POST">
+                 {% csrf_token %}
+		        <div>[DB]</div>
+			<div class="hr-line-dashed"></div>	
+                        <div class="form-group">
+                                <label for="db_name" class="col-sm-2 control-label">数据库名<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+				 <input id="db_name" name="db_name" value="{{db.db_name}}" type="text" class="form-control" >
+                                </div>
+                        </div>
+			<div class="form-group">
+                                <label for="db_ip"  class="col-lg-2 control-label">数据库IP<span class="red-fonts">*</span> </label>
+                                <div class="col-sm-3">
+				<input id="db_ip" name="db_ip" value="{{ db.db_ip }}" type="text" class="form-control" >
+                                </div>
+                         </div>	
+			<div class="form-group">
+                             <label for="db_user"  class="col-lg-2 control-label">连接用户<span class="red-fonts">*</span> </label>
+                                <div class="col-sm-3">
+				<input id="db_user" name="db_user" value="{{db.db_user}}" type="text" class="form-control" >
+                                </div>
+                         </div>
+			 <div class="form-group">
+                                <label for="db_pass" class="col-sm-2 control-label">连接密码<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+				<input id="db_pass" name="db_pass" value="{{db.db_pass}}"  type="password" class="form-control">
+                                </div>
+                        </div>
+			 <div class="form-group">
+                                <label for="db_port" class="col-sm-2 control-label">连接端口<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+				<input id="db_port" name="db_port" value="{{db.db_port}}" type="text" class="form-control">
+                                </div>
+                        </div>
+
+		        <div>[LDAP]</div>
+			<div class="hr-line-dashed"></div>
+			<div class="form-group">
+                                <label for="ldap_host" class="col-sm-2 control-label">连接地址<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+				<input id="ldap_host" name="ldap_host" value="{{ldap.ldap_host}}" type="text" class="form-control">
+                                </div>
+                        </div>
+			<div class="form-group">
+                                <label for="ldap_user" class="col-sm-2 control-label">用户名<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+				<input id="ldap_user" name="ldap_user" value="{{ldap.ldap_user}}" type="text" class="form-control">
+                                </div>
+                        </div>
+			<div class="form-group">
+                                <label for="ldap_pass" class="col-sm-2 control-label">密  码<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+			<input id="ldap_pass" name="ldap_pass" value="{{ldap.ldap_pass}}" type="password" class="form-control">
+                                </div>
+                        </div>
+			<div class="form-group">
+                                <label for="ldap_base" class="col-sm-2 control-label">BASE_DN<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+				<input id="ldap_base" name="ldap_base" value="{{ldap.ldap_base}}" type="text" class="form-control">
+                                </div>
+                        </div>
+                        <div class="form-group">
+				<label for="ldap_status" class="col-sm-2 control-label">连接状态<span class="red-fonts">*</span></label>
+                              <div class="col-sm-3">
+                                      <div class="radio i-checks">
+				{%if ldap.ldap_status == "1" %}
+				<label><input type="radio" checked="" value="1" name="ldap_status">启用</label>
+			        <label><input type="radio" value="0"  name="ldap_status">禁用</label>
+				{%else%}
+				<label><input type="radio" value="1" name="ldap_status">启用</label>
+				<label><input type="radio" checked="" value="0" name="ldap_status">禁用</label>
+				{%endif%}           
+                                </div>
+                              </div>
+                        </div>
+
+			<div class="hr-line-dashed"></div>
+			<p style="color:red">注:LDAP开启后,需要重启应用才能生效!</p>
+			<div class="form-group">
+                               <div class="col-sm-4 col-sm-offset-5"> 
+				        <button class="btn btn-primary" type="submit"> 提交 </button>
+                               </div>
+                        </div>
+                 </form>
+                </div>
+               </div>
+              </div>
+             </div>	      
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$('#userForm').validator({
+    timely: 2,
+    theme: "yellow_right_effect",
+    rules: {
+        check_ip: [/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/, 'IP地址不合法'],
+        type_m: function(element){
+                    return  $("#M").is(":checked");
+            }
+    },
+    fields: {
+        "db_name": {
+            rule: "required;length[1~50]",
+            tip: "输入数据库名",
+            ok: "",
+            msg: {required: "必须填写!"}
+        },
+        "db_user": {
+            rule: "required;length[1~50]",
+            tip: "输入数据库用户",
+            ok: "",
+            msg: {required: "必须填写!"}
+        },
+        "db_pass": {
+            rule: "required;length[1~50]",
+            tip: "输入数据库密码",
+            ok: "",
+            msg: {required: "必须填写!"}
+        },
+        "db_port": {                                                                                             
+            rule: "checked", 
+            tip: "输入端口号",
+            ok: "",              
+            msg: {required: "必须填写!"}
+        },
+        "db_ip": {
+            rule: "required",
+            tip: "输入IP地址",
+            ok: "",
+            msg: {required: "必须填写!"}
+        }  
+    },
+    valid: function(form){
+        form.submit();
+    }
+});
+
+</script>
+{% endblock %}

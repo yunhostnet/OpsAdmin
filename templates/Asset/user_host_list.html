@@ -1,0 +1,90 @@
+{% extends "common/base.html" %}
+{% load opstags%}
+{% block title %}
+    主机列表 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a href={% url "user_host_list" %}>主机列表</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!-- ################################################################################## -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>主机列表</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="">
+			    <a href="{% url 'user_host_list' %}?export=true" name="export" class="btn btn-sm btn-success" onclick="return confirm('确认导出列表?')">
+		       	- 导出列表 -</a>
+		    <form id="search_form" method="get" action="{% url 'user_host_list'%}" class="pull-right mail-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" id="search_input" name="keyword" placeholder="搜索">
+                            <div class="input-group-btn">
+                                <button id='search_btn' type="submit" class="btn btn-sm btn-primary">搜索</button>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+
+                    <table class="table table-hover" >
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                <input type="checkbox" id="select_all" onclick="selectAll()" data-editable='false' name="select_all">
+                                </th>
+				  <th class="text-center">ID</th>
+				  <th class="text-center">主机名</th>
+				  <th class="text-center">IP地址</th>
+				  <th class="text-center">主机组</th>
+				  <th class="text-center">主机类型</th>
+				  <th class="text-center">系统类型</th>
+				  <th class="text-center">主机状态</th>
+				  <th class="text-center">创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for i in lPage.object_list %}
+                                  <tr class="gradeX">
+				      <td class="text-center" name="id" value="{{ i.id }}" data-editable='false'>
+                                            <input type="checkbox"  name="selected" value="{{ i.id }}" class="i-checks">
+                                      </td>
+				      <td class="text-center">{{forloop.counter}}</td>
+	          <td class="text-center"><a href="{% url 'host_details' i.id%}">{{ i.hostname |default_if_none:""}}</a></td>
+                                      <td class="text-center">{{ i.ip |default_if_none:"" }}</td>
+				      <td class="text-center">{{ i.hostgroup.all | hostgroup_str}}</td>
+                                      <td class="text-center">
+					      {% for k,v in asset_type%}
+					         {% if k == i.asset_type%}
+					             {{ v | default_if_none:""}}
+					         {%endif%}
+				              {%endfor%}
+				      </td>
+                                      <td class="text-center">{{ i.system_type|default_if_none:"" }}</td>
+				      {% if i.status == 0 %}
+				         <td class="text-center"><span class="label label-important">禁用</span></td>
+				      {%else%}
+				      <td class="text-center"><span class="label label-info">正常</span></td>
+				      {%endif%}
+				      <td class="text-center">{{ i.date_added | date:"Y-m-d H:i:s"}}</td>
+                                  </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                   {% include "common/paginator.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

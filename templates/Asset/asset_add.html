@@ -1,0 +1,162 @@
+{% extends "common/base.html" %}
+{% block title %}
+   添加主机 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a>资产管理</a></li>
+               <li><a>添加主机</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!-- ############################################################################################# -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+	            <h5>主机信息</h5>
+                </div>
+				
+	    <div class="ibox-content">
+                {% if err %}
+                    <div class="alert alert-warning text-center">{{ err }}</div>
+                {% endif %}
+	    <div class="panel blank-panel">
+		     <div class="panel-body">
+			     <div class="tab-content">
+				     <div id="tab-1" class="ibox float-e-margins tab-pane active">
+               <form id="userForm" class="form-horizontal" role="form" action="" method="POST">
+                 {% csrf_token %}
+                        <div class="form-group">
+                                <label for="hostname" class="col-sm-2 control-label">主机名<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+                                  <input id="hostname" name="hostname" placeholder="主机名" type="text" class="form-control" >
+                                </div>
+                        </div>
+			
+			<div class="hr-line-dashed"></div>	
+			<div class="form-group">
+                                <label for="ip"  class="col-lg-2 control-label">IP地址<span class="red-fonts">*</span> </label>
+                                <div class="col-sm-3">
+                                  <input id="ip" name="ip" placeholder="IP地址" type="text" class="form-control" >
+                                </div>
+                         </div>	
+			<div class="hr-line-dashed"></div>	
+			<div class="form-group">
+                             <label for="asset_type"  class="col-lg-2 control-label">主机类型<span class="red-fonts">*</span> </label>
+                                <div class="col-sm-3">
+			           <select id="asset_type" name="asset_type" class="form-control m-b">
+                                        {% for i,v in asset_type %}
+                                            <option value="{{ i }}">{{ v |default_if_none:"" }}</option>
+                                        {% endfor %}
+                                    </select> 
+                                </div>
+                         </div>
+			 <div class="hr-line-dashed"></div>
+			 <div class="form-group">
+                                <label for="user" class="col-sm-2 control-label">主机用户<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+                                   	<input id="user" name="user" placeholder="SSH用户" type="text" class="form-control">
+                                </div>
+                        </div>
+			 <div class="hr-line-dashed"></div>
+			 <div class="form-group">
+                                <label for="passwd" class="col-sm-2 control-label">主机密码<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+                                   	<input id="passwd" name="passwd" placeholder="SSH密码" type="password" class="form-control">
+                                </div>
+                        </div>
+
+		
+			 <div class="hr-line-dashed"></div>
+			 <div class="form-group">
+                                <label for="port" class="col-sm-2 control-label">主机端口<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+                                   	<input id="port" name="port" placeholder="SSH端口号" type="text" class="form-control">
+                                </div>
+                        </div>
+			 <div class="hr-line-dashed"></div>
+			 <div class="form-group">
+                                <label for="status" class="col-sm-2 control-label">主机状态<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+                                      <div class="radio i-checks">
+                                          <label><input type="radio" checked="" value="1" name="status">启用</label>
+                                          <label><input type="radio" value="0" name="status">禁用</label>
+                                      </div>
+                                </div>
+                        </div>
+			<div class="hr-line-dashed"></div>
+			<div class="form-group">
+                               <div class="col-sm-4 col-sm-offset-5"> 
+                                      <button class="btn btn-primary" type="submit"> 提交 </button>
+				      <a href="{% url 'alist' %}" class="btn btn-warning" type="submit">返回</a>
+                               </div>
+                        </div>
+                 </form>
+                </div>
+               </div>
+              </div>
+             </div>	      
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$('#userForm').validator({
+    timely: 2,
+    theme: "yellow_right_effect",
+    rules: {
+        check_ip: [/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/, 'IP地址不合法'],
+        type_m: function(element){
+                    return  $("#M").is(":checked");
+            }
+    },
+    fields: {
+        "hostname": {
+            rule: "required;length[1~50]",
+            tip: "输入记录名",
+            ok: "",
+            msg: {required: "必须填写!"}
+        },
+        "user": {
+            rule: "required;length[1~50]",
+            tip: "输入主机用户",
+            ok: "",
+            msg: {required: "必须填写!"}
+        },
+        "passwd": {
+            rule: "required;length[1~50]",
+            tip: "输入主机密码",
+            ok: "",
+            msg: {required: "必须填写!"}
+        },
+        "port": {                                                                                             
+            rule: "checked", 
+            tip: "输入端口号",
+            ok: "",              
+            msg: {required: "必须填写!"}
+        },
+        "ip": {
+            rule: "required;check_ip",
+            tip: "输入IP地址",
+            ok: "",
+            msg: {required: "必须填写!"}
+        }  
+    },
+    valid: function(form){
+        form.submit();
+    }
+});
+
+</script>
+{% endblock %}

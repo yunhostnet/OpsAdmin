@@ -1,0 +1,15 @@
+<li class="nav-header">
+     <div style="text-align:center">
+        <span>
+	     {% if request.user.username == "admin" %}
+<a href="/accounts/user/info/"><img alt="image" class="img-circle" width="54" height="54" src="/static/static/img/admins.jpg" /></a>
+	     {%else%}
+<a href="/accounts/user/info/"><img alt="image" class="img-circle" width="54" height="54" src="/static/static/img/user.png" /></a>
+             {%endif%}
+        </span>
+    </div>
+    <div class="logo-element">
+        OPS+
+    </div>
+</li>
+

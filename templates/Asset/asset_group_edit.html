@@ -1,0 +1,108 @@
+{% extends "common/base.html" %}
+{% block title %}
+    主机组编辑 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a href={% url "alist" %}>资产管理</a></li>
+               <li><a href={% url "glist" %}>主机组列表</a></li>
+               <li><a href="#">主机组编辑</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!-- ################################################################################## -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>主机组编辑</h5>
+                </div>
+
+                <div class="ibox-content">
+                   <form id="group_Form" method="POST" class="form-horizontal" action="">
+                   {% csrf_token %}
+                   <div class="form-group">
+			<label class="col-sm-2 control-label">主机组名<span class="red-fonts">*</span></label>
+                        <div class="col-sm-6">
+			<input type="text" id="groupname" value="{{ group.name }}"  name="groupname" class="form-control"></div>
+                        </div>
+
+                   <div class="form-group">
+		        <label class="col-sm-2 control-label">选择主机<span class="red-fonts">*</span></label>
+                            <div class="col-sm-4">
+                            <div>
+                               <select id="assets" name="assets" class="form-control m-b" size="10" multiple>
+                                    {% for a in host_no_select%}
+				    <option value="{{ a.id }}">{{a.hostname|default_if_none:""}}</option>
+                                    {% endfor %}
+                               </select>
+                               </div>
+                            </div>
+
+                            <div class="col-sm-1">
+                                <div class="btn-group" style="margin-top: 60px;">
+                                    <button type="button" class="btn btn-white" onclick="move('assets', 'host_select')"><i class="fa fa-chevron-right"></i></button>
+                                    <button type="button" class="btn btn-white" onclick="move_left('host_select', 'assets')"><i class="fa fa-chevron-left"></i> </button>
+                                </div>
+                            </div>
+
+                       <div class="col-sm-3">
+                       <div>
+                        <select id="host_select" name="host_select" class="form-control m-b" size="10"  multiple>
+		          {% for a in host_select %}
+			   <option value="{{ a.id }}">{{ a.hostname|default_if_none:"" }}</option>
+		          {% endfor %}
+		                </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">撰写备注</label>
+			 <div class="col-sm-8"><input type="text" value="{{group.comment}}" name="comment" class="form-control"></div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-5">
+            <button class="btn btn-primary" id="submit_button" type="submit" onclick="on_submit('host_select')">提交</button>
+	    <a href="{% url 'glist' %}" class="btn btn-warning" type="submit">返回</a>
+                            </div>
+                        </div>
+                    </form> 
+                </div>
+              </div>
+           </div>
+         </div>
+      </div>
+<script>
+ $('#group_Form').validator({
+    timely: 2,
+    theme: "yellow_right_effect",
+    fields: {
+        "groupname": {
+            rule: "required",
+            tip: "输入主机组名",
+            ok: "",
+            msg: {required: "主机组名必须填写!"},
+        }
+    },
+    valid: function(form) {
+        form.submit();
+        }
+});
+
+function on_submit(id){
+  $('#'+id+' option').each(
+  function(){
+     $(this).prop('selected', true)
+  })
+}
+</script>
+{% endblock %}

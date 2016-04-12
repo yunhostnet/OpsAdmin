@@ -1,0 +1,295 @@
+{% extends "common/base.html" %}
+{% block title %}
+   OpsAdmin | 运维管理
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+          </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-success pull-right">Users</span>
+                    <h5>用户总数</h5>
+                </div>
+                <div class="ibox-content">
+		    <h1 class="no-margins"><a href="{%url 'listuserurl' %}">{{ iuser.count }}</a></h1>
+		    <small>All User</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-info pull-right">Hosts</span>
+                    <h5>主机总数</h5>
+                </div>
+                <div class="ibox-content">
+		<h1 class="no-margins"><a href="{% url 'alist'%}">{{ ihost.count }}</a></h1>
+                    <small>All Host</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-primary pull-right">Authorize</span>
+		    <h5>授权总数</h5>
+                </div>
+                <div class="ibox-content">
+		<h1 class="no-margins"><a href="{%url 'authorize_list' %}">{{ iAuthorize.count }}</span></a></h1>
+		    <small>All Authorize</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-danger pull-right"></span>
+                    <h5>在线人数</h5>
+                </div>
+                <div class="ibox-content">
+			<h1 class="no-margins"><a href=""> <span id="online_hosts">{{ online}}</span></a></h1>
+                    <small>All User</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row">
+        <div class="col-sm-2 border-bottom white-bg dashboard-header" style="margin-left:15px;height: 346px">
+            <h2>用户登录数</h2>
+            <small>欢迎<span class="text-info">{{ request.user.username }}</span>用户登录.查看最近7天每个用户的登录次数</small>
+        </div>
+        <div class="col-sm-9" id="top10" style="margin-left: -15px;height: 346px;padding: 15px 0 15px 0;"></div>
+        <div class="col-sm-1 white-bg" id="top1" style="margin-left: -15px;height: 346px">
+            <div class="statistic-box">
+                <h4>
+                </h4>
+                <p>
+                </p>
+            </div>
+	</div>
+    </div>
+
+    
+    <br/>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>一周Top10资产</h5>
+                </div>
+                <div class="ibox-content ibox-heading">
+                    <h3><i class="fa fa-inbox"></i> 一周Top10资产 </h3>
+                    <small><i class="fa fa-map-marker"></i> 登录次数及最近一次登录记录. </small>
+                </div>
+                <div class="ibox-content inspinia-timeline">
+                    {% if host_top_ten %}
+                        {% for data in host_top_ten %}
+                            <div class="timeline-item">
+                                <div class="row">
+                                    <div class="col-xs-5 date">
+                                        <i class="fa fa-info-circle"></i>
+                                        <strong>{{ data.host }}</strong>
+                                        <br/>
+                                        <small class="text-navy">{{ data.times }}次</small>
+                                    </div>
+                                    <div class="col-xs-7 content no-top-border">
+                                        <p class="m-b-xs">最近一次登录用户</p>
+                                        <p>{{ data.last.user }}</p>
+                                        <p>于{{ data.last.start_time |date:"Y-m-d H:i:s" }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center">(暂无)</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>最近十次登录</h5>
+                    <div class="ibox-tools">
+                        <span class="label label-info-light">10 Messages</span>
+                       </div>
+                </div>
+                <div class="ibox-content ibox-heading">
+                    <h3><i class="fa fa-paper-plane-o"></i> 登录记录 </h3>
+                    <small><i class="fa fa-map-marker"></i> 最近十次登录记录. </small>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        <div class="feed-activity-list">
+                            {% if login_10 %}
+                                {% for login in login_10 %}
+                                    <div class="feed-element">
+                                        <a href="profile.html" class="pull-left">
+                                            <img alt="image" class="img-circle" src="/static/img/root.png">
+                                        </a>
+                                        <div class="media-body ">
+                                            {% ifequal login.is_finished 0 %}
+                                                <small class="pull-right text-navy">{{ login.start_time}}</small>
+                                            {% else %}
+                                                <small class="pull-right">{{ login.start_time }}</small>
+                                            {% endifequal %}
+                                            <strong>{{ login.user }}</strong> 登录了{{ login.host }} <br>
+                                            <small class="text-muted">{{ login.start_time }}</small>
+
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                <button id="show" class="btn btn-primary btn-block m-t"><i class="fa fa-arrow-down"></i> 更多 </button>
+                                <div id='more' style="display: none">
+                                    <br/>
+                                    <div class="feed-activity-list">
+                                        {% for login in login_more_10 %}
+                                            <div class="feed-element">
+                                                <a href="profile.html" class="pull-left">
+                                                    <img alt="image" class="img-circle" src="/static/img/root.png">
+                                                </a>
+                                                <div class="media-body ">
+                                                    {% ifequal login.is_finished 0 %}
+                                                        <small class="pull-right text-navy">{{ login.start_time }}</small>
+                                                    {% else %}
+                                                        <small class="pull-right">{{ login.start_time }}</small>
+                                                    {% endifequal %}
+                                                    <strong>{{ login.user }}</strong> 登录了{{ login.host }} <br>
+                                                    <small class="text-muted">{{ login.start_time }}</small>
+
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-center">(暂无)</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>一周Top10用户</h5>
+                </div>
+                <div class="ibox-content ibox-heading">
+                    <h3><i class="fa fa-user"></i> 一周Top10用户 </h3>
+                    <small><i class="fa fa-map-marker"></i> 用户登录次数及最近一次登录记录. </small>
+                </div>
+                <div class="ibox-content inspinia-timeline">
+                    {% if user_top_ten %}
+                        {% for data in user_top_ten %}
+                            <div class="timeline-item">
+                                <div class="row">
+                                    <div class="col-xs-5 date">
+                                        <i class="fa fa-info-circle"></i>
+                                        <strong>{{ data.user }}</strong>
+                                        <br/>
+                                        <small class="text-navy">{{ data.times }}次</small>
+                                    </div>
+                                    <div class="col-xs-7 content no-top-border">
+                                        <p class="m-b-xs">最近一次登录主机</p>
+                                        <p>{{ data.last.host }}</p>
+                                        <p>于{{ data.last.start_time |date:"Y-m-d H:i:s" }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center">(暂无)</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+</div>
+<script src="/static/static/js/echarts/echarts.js"></script>
+<script type="text/javascript">
+require.config({
+            packages: [
+                {
+                    name: 'echarts',
+                    location: '/static/static/js/echarts',
+                    main: 'echarts'
+                }
+            ]
+        });
+        
+        var option = {
+	    title : {
+	        text: '周数据一览',
+		 subtext: '一个周的数据汇总',
+		  x: 'center'
+	    },
+            tooltip : {
+                trigger: 'axis'
+            },
+            backgroundColor: '#fff',
+            legend: {
+                data:['用户','主机'],
+		y: 'bottom'
+            },
+            toolbox: {
+                show : false,
+                feature : {
+                    magicType : {show: true, type: ['line','bar']},
+                }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : 'category',
+	            boundaryGap : false,
+		    data : {{ day |safe }}
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'用户',
+                    type:'line',
+		    data: {{ user_num | safe }}
+                },
+                {
+                    name:'主机',
+                    type:'line',
+		    data: {{ asset_num | safe }}
+                }
+            ]
+        };
+        
+        require(
+            [
+                'echarts',
+                'echarts/chart/line',
+            ],
+            function (ec) {
+                var myChart = ec.init(document.getElementById('top10'));
+                myChart.setOption(option);
+            }
+        )
+</script>
+{% endblock %}

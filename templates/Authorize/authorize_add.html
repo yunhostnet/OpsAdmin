@@ -1,0 +1,142 @@
+{% extends "common/base.html" %}
+{% block title %}
+   添加授权信息 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a>资产管理</a></li>
+               <li><a>授权管理</a></li>
+               <li><a>添加授权</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<link href="/static/static/css/plugins/datepicker/datepicker3.css" rel="stylesheet">
+<link href="/static/static/css/plugins/chosen/chosen.css" rel="stylesheet">
+<script src="/static/static/js/plugins/chosen/chosen.jquery.js"></script>
+<!-- ############################################################################################# -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+	            <h5>添加授权信息</h5>
+                </div>
+				
+	    <div class="ibox-content">
+               <form id="userForm" class="form-horizontal" role="form" action="" method="POST">
+                 {% csrf_token %}
+                        <div class="form-group">
+                                <label for="hostname" class="col-sm-2 control-label">名称<span class="red-fonts">*</span></label>
+                                <div class="col-sm-3">
+                                  <input id="name" name="name" placeholder="授权名称" type="text" class="form-control" >
+                                </div>
+                        </div>
+			
+			<div class="hr-line-dashed"></div>	
+			<div class="form-group">
+                                <label for="user"  class="col-lg-2 control-label">用户<span class="red-fonts">*</span> </label>
+                                <div class="col-sm-3">
+	  <select name="user" id="user" data-placeholder="请选择用户" class="chosen-select form-control m-b"multiple tabindex="2">
+		  {% for user in users %}
+		  {% if user.username != "admin" %}
+		    <option value="{{ user.id }}">{{ user.username }}</option>
+		  {%endif%}
+		  {% endfor %}
+	  </select>
+                                </div>
+                         </div>	
+			<div class="hr-line-dashed"></div>	
+			<div class="form-group">
+                             <label for="asset"  class="col-lg-2 control-label">主机<span class="red-fonts">*</span> </label>
+                                <div class="col-sm-3">
+         <select id="asset" name="asset" data-placeholder="请选择资产"  class="chosen-select form-control m-b" multiple tabindex="2">
+                                        {% for i in assets%}
+					<option value="{{ i.id }}">{{ i.hostname}}</option>
+                                        {% endfor %}
+         </select> 
+                                </div>
+                         </div>
+		
+			 <div class="hr-line-dashed"></div>
+			 <div class="form-group">
+                                <label for="asset_group" class="col-sm-2 control-label">主机组</label>
+                                <div class="col-sm-3">
+	<select name="asset_group" data-placeholder="请选择主机组" class="chosen-select form-control m-b" multiple tabindex="2">
+		   {% for asset_group in assetgroups %}
+		     <option value="{{ asset_group.id }}">{{ asset_group.name }}</option>
+		   {% endfor %}
+	</select>
+                                </div>
+                        </div>
+			 <div class="hr-line-dashed"></div>
+			 <div class="form-group">
+                                <label for="comment" class="col-sm-2 control-label">备注</label>
+                                <div class="col-sm-3">
+	                            <input id="comment" name="comment" type="text" class="form-control">
+                                </div>
+                        </div>
+			<div class="hr-line-dashed"></div>
+			<div class="form-group">
+                               <div class="col-sm-4 col-sm-offset-5"> 
+                                      <button class="btn btn-primary" type="submit"> 提交 </button>
+				      <a href="{% url 'authorize_list' %}" class="btn btn-warning" type="submit">返回</a>
+                               </div>
+                        </div>
+                 </form>
+                </div>
+               </div>
+              </div>
+             </div>	      
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$('#userForm').validator({
+    timely: 2,
+    theme: "yellow_right_effect",
+    rules: {
+        check_name: [/^\w{2,20}$/, '大小写字母数字和下划线,2-20位'],
+        check_user: function(){
+            return $('#user').val() == null
+        },
+        check_asset: function(){
+            return $('#asset').val() == null
+        }
+    },
+    fields: {
+        "name": {
+            rule: "required;check_name",
+            tip: "输入名称!",
+            ok: "",
+            msg: {required: "必须填写!"}
+        }
+    },
+    valid: function(form){
+        form.submit();
+    }
+});
+var config = {
+                '.chosen-select'           : {},
+                '.chosen-select-deselect'  : {allow_single_deselect:true},
+                '.chosen-select-no-single' : {disable_search_threshold:10},
+                '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+                '.chosen-select-width'     : {width:"95%"}
+};
+for (var selector in config) {
+    $(selector).chosen(config[selector]);
+}
+</script>
+<script src="/static/static/js/cropper/cropper.min.js"></script>
+<script src="/static/static/js/datapicker/bootstrap-datepicker.js"></script>
+
+{% endblock %}

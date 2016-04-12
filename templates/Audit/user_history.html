@@ -1,0 +1,122 @@
+{% extends "common/base.html" %}
+{% block title %}
+   日志审计 | OpsAdmin
+{% endblock %}
+{% load opstags %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a href=>日志审计</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+
+<link href="/static/static/css/plugins/datepicker/datepicker3.css" rel="stylesheet">
+<link href="/static/static/css/plugins/chosen/chosen.css" rel="stylesheet">
+<script src="/static/static/js/plugins/chosen/chosen.jquery.js"></script>
+
+<style>
+    .bootstrap-dialog-body  {
+        background-color: rgba(0, 0, 0, 0);
+    }
+    .bootstrap-dialog-message {
+        color: #00FF00;
+    }
+    .modal-content {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .modal-dialog {
+        background-color: rgba(0, 0, 0, 0);
+        width: 800px;
+    }
+    .modal-body {
+        background-color: rgba(0, 0, 0, 0);
+    }
+    .modal-header {
+        background-color: #FFFFFF;
+    }
+
+</style>
+<!-- ################################################################################## -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>日志审计</h5>
+                </div>
+
+                <div class="ibox-content">
+                    <div class="">
+		    <form id="search_form" method="get" action="" class="pull-right mail-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" id="search_input" name="keyword" placeholder="搜索">
+                            <div class="input-group-btn">
+                                <button id='search_btn' type="submit" class="btn btn-sm btn-primary">搜索</button>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+
+                    <table class="table table-hover" >
+                        <thead>
+                            <tr>
+				  <th class="text-center">ID</th>
+				  <th class="text-center">用户名</th>
+				  <th class="text-center">登陆IP</th>
+				  <th class="text-center">登陆时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for i in lPage %}
+                                  <tr class="gradeX">
+				      <td class="te:xt-center">{{forloop.counter}}</td>
+				      <td class="text-center"><a class="log_record" href="{% url 'user_history'%}">{{ i.username }}</a></td>
+                                      <td class="text-center">{{ i.remote_ip |default_if_none:"" }}</td>
+				      <td class="text-center">{{ i.date_added | date:"Y-m-d H:i:s"}}</td>
+
+                                  </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                   {% include "common/paginator.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/static/js/datapicker/bootstrap-datepicker.js"></script>
+<script src="/static/static/js/cropper/cropper.min.js"></script>
+
+<script>
+    $('.log_record').click(function(){
+        var url = $(this).attr('value');
+        //window.open(url, '播放', 'height=500, width=910, top=89px, left=99px,toolbar=no,menubar=no,scrollbars=auto,resizeable=no,location=no,status=no');
+        var username = $(this).closest('tr').find('.username')[0].innerHTML;
+        var ip = $(this).closest('tr').find('.ip')[0].innerHTML;
+        var start_time = $(this).closest('tr').find('.start_time')[0].innerHTML;
+        var end_time = $(this).closest('tr').find('.end_time')[0].innerHTML;
+        var div_username = ' 用户名: '+'<span class="text-info">'+username+'' + '</span>';
+        var div_ip = ' 主机: '+'<span class="text-info">' + ip + '</span>';
+        var div_time = ' 时间: ' + '<span class="text-info">'+start_time +'</span>' +' - <span class="text-info">' + end_time + '</spa
+n>';
+        var title = 'JumpServer录像回放 '+ div_username + div_ip + div_time;
+        layer.open({
+            type: 2,
+            title: title,
+            maxmin: true,
+            shade: false,
+            area: ['800px', '520px'],
+            content: url
+        });
+        return false;
+    });
+</script>
+
+{% endblock %}

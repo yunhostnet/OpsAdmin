@@ -1,0 +1,109 @@
+{% extends "common/base.html" %}
+{% load opstags%}
+{% block title %}
+    用户详情 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+	       <li><a href={% url "listuserurl" %}>用户管理</a></li>
+               <li><a href="#">用户列表</a></li>
+               <li><a href="#">用户详情</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!-- ################################################################################## -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+	           <h5 style="text-align:center" >详情</h5>
+                </div>
+
+                <div class="ibox-content">
+                    <table class="table table-striped table-bordered table-hover" id="editable" >
+                        <thead>
+                            <tr>
+				  <th class="text-center">名称</th>
+				  <th class="text-center">详情</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                  <tr>
+			             <td class="text-navy text-right">用户状态</td>
+				     {%if i.is_active == 1 %}
+				       <td class="text-left"><span class="label label-info">正常</span></td>
+				     {%else%}
+				       <td class="text-left"><span class="label label-important">禁用</span></td>
+				     {%endif%}
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">用户ID</td>
+			             <td>{{ i.id|default_if_none:""}}</td>	     
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">登录名</td>
+			             <td>{{ i.username|default_if_none:""  }}</td>	     
+                                  </tr>
+                                  <tr>
+				     <td class="text-navy text-right">用户名</td>
+			             <td>{{ i.nickname|default_if_none:""  }}</td>	     
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">级别</td>
+				     {% if i.is_superuser == 1 %}
+				         <td>超级管理员</td>
+				     {%else%}
+				         <td>普通用户</td>
+				     {%endif%}
+                                  </tr>
+
+                                  <tr>
+			             <td class="text-navy text-right">性别</td>
+			             <td>{{ i.sex|default_if_none:""  }}</td>	     
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">角色</td>
+			             <td>{{ i.role |default_if_none:""  }}</td>	     
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">手机号</td>
+			             <td>{{ i.moblie_num|default_if_none:""  }}</td>	     
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">QQ号</td>
+			             <td>{{ i.qq_num|default_if_none:""  }}</td>	     
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">邮箱</td>
+			             <td>{{ i.email|default_if_none:""  }}</td>	     
+                                  </tr>
+                                  <tr>
+				     {% if i.username != "admin"%}
+			                <td class="text-navy text-right">主机</td>
+				        <td>{{ i.id | asset_host_all }}</td>
+				     {%endif%}
+                                  </tr>
+                                  <tr>
+			             <td class="text-navy text-right">最后登录时间</td>
+			             <td>{{ i.last_login|date:"Y-m-d H:i:s"}}</td>	     
+                                  </tr>
+                        </tbody>
+                    </table>
+		    <div style="text-align:center;line-height:30px;">
+			    {%if request.user.username == "admin"%}
+			    <a href={% url "listuserurl" %} class="btn btn-warning" type="submit">返回列表</a>
+			    {%endif%}
+		    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

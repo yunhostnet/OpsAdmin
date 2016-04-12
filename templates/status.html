@@ -1,0 +1,27 @@
+{% extends "common/base.html" %}
+{% block title %}
+    状态页面 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a >状态页面</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+{% if msg %}
+   <div class="alert alert-success text-center">{{ msg }}</div>
+    <script language="javascript">
+      window.location.replace("{% url URL %}");
+    </script>
+{% endif %}
+{% if err %}
+    <div class="alert alert-warning text-center">{{ err }}<a href="{% url URL %}">返回</a></div>
+{% endif %}
+
+{% endblock %}

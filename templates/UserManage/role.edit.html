@@ -1,0 +1,69 @@
+{% extends "common/base.html" %}
+{% block head %}
+    <script src="/static/static/js/jquery.bootstrap-duallistbox.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/static/css/bootstrap-duallistbox.css">
+{% endblock %}
+{% block title %}
+    编辑角色 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a>用户管理</a></li>
+               <li><a >编辑角色</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!-- ############################################################################################# -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>编辑角色</h5>
+                 </div>
+                  <div class="ibox-content"> 
+                    <hr/>
+    <form class="form-horizontal" role="form" action={% url "editroleurl" ID %} method="POST" >
+    {% csrf_token %}
+        {% for item in form %}
+            <div class="form-group">
+                <label class="control-label col-md-1">{{item.label}}</label>
+                <div class="col-md-11">
+                    {{item}}
+                </div>
+                <div class="col-md-offset-1 col-md-10">
+                    {{item.errors}}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="form-group">
+            <div class="col-md-offset-1 col-md-10">
+                <button type="submit" class="btn btn-danger btn-sm">更 新</button>
+		<a href="{% url 'listroleurl' %}" class="btn btn-warning" type="submit">返回</a>
+            </div>
+        </div>
+
+    </form>
+
+    <script>
+        var demo1 = $('select[name="permission"]').bootstrapDualListbox({
+              nonSelectedListLabel: '可选择权限',
+              selectedListLabel: '已选择权限',
+              preserveSelectionOnMove: 'moved',
+              moveOnSelect: false,
+        });
+    </script>
+
+      </div>                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

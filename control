@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+#
+#
+WORKING_DIR=$(dirname "$0")
+export WORKING_DIR=$(cd -P "$WORKING_DIR"/ > /dev/null; pwd)
+#num=`ps -ef | grep uwsgi | grep -v "grep" | wc -l`
+num=$(ps -ef| grep uwsgi | grep -v "grep"| wc -l)
+
+function run(){
+	if [ $num -lt 1 ]
+	then
+	ps -ef | grep uwsgi | grep -v "grep" | awk '{print$2}' | xargs kill -9  2>/dev/null
+	/usr/bin/uwsgi_python27  -x $WORKING_DIR/uwsgi_socket.xml
+	else
+	echo "uwsgi is runing."
+	fi
+	
+}
+function stop(){
+	ps -ef | grep uwsgi | grep -v "grep" | awk '{print$2}' | xargs kill -9  2>/dev/null
+	echo "Stop........"
+}
+
+case "$1" in
+        run)
+        run
+        ;;
+        stop)
+        stop
+        ;;
+        *)
+        echo "Usage: ${0} {start|stop}" >&2
+             python manage.py runserver 0.0.0.0:8081
+        exit 1
+        ;;
+esac
+

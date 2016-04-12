@@ -1,0 +1,6 @@
+Django==1.6
+XlsxWriter==0.8.4
+xlrd==0.9.4
+django_auth_ldap==1.2.7
+python-ldap
+paramiko

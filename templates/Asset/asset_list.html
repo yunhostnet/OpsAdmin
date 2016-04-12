@@ -1,0 +1,188 @@
+{% extends "common/base.html" %}
+{% load opstags%}
+{% block title %}
+    资产列表 | OpsAdmin
+{% endblock %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2></h2>
+          <ol class="breadcrumb">
+               <li><a href="/">仪表盘</a></li>
+               <li><a href={% url "alist" %}>资产管理</a></li>
+               <li><a href={% url "alist" %}>主机列表</a></li>
+        </ol>
+      </div>
+      <div class="col-lg-2">
+   </div>
+</div>
+<!-- ################################################################################## -->
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>主机列表</h5>
+                </div>
+
+                <div class="ibox-content">
+                    <div class="">
+	            <a class="btn btn-sm btn-primary " href="{% url 'aadd' %}">添加主机</a>
+		    <a class="btn btn-sm btn-info " href="{%url 'batch_add'%}">批量添加主机</a>
+	            <a id="host_update" class="btn btn-sm btn-success">主机更新</a>
+                    <a id="del_btn" class="btn btn-sm btn-danger ">删除所选</a>
+                <a href="{% url 'alist' %}?export=true" name="export" class="btn btn-sm btn-success" onclick="return confirm('确认导出列表?')"> - 导出列表 -</a>
+                   
+	       	  <div class="btn-group">
+                     <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" 
+	             aria-haspopup="true" aria-expanded="false"> -- 更多操作 --  <span class="caret"></span>
+                     </button>
+                     <ul class="dropdown-menu">
+                       <li><a href="#">任务计划</a></li>
+                       <li><a href="#">批量命令</a></li>
+                       <li><a href="#">删除主机</a></li>
+                       <li role="separator" class="divider"></li>
+                       <li><a href="#">其他操作</a></li>
+                     </ul>
+                  </div>
+
+		    <form id="search_form" method="get" action="{% url 'alist' %}" class="pull-right mail-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" id="search_input" name="keyword" placeholder="搜索">
+                            <div class="input-group-btn">
+                                <button id='search_btn' type="submit" class="btn btn-sm btn-primary">搜索</button>
+                            </div>
+                        </div>
+                    </form>
+                    </div>
+
+                    <table class="table table-hover" >
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                <input type="checkbox" id="select_all" onclick="selectAll()" data-editable='false' name="select_all">
+                                </th>
+				  <th class="text-center">ID</th>
+				  <th class="text-center">主机名</th>
+				  <th class="text-center">IP地址</th>
+				  <th class="text-center">主机组</th>
+				  <th class="text-center">主机类型</th>
+				  <th class="text-center">系统类型</th>
+				  <th class="text-center">主机状态</th>
+				  <th class="text-center">创建时间</th>
+				  <th class="text-center"><a href="#">操作</a></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for i in lPage.object_list %}
+                                  <tr class="gradeX">
+				      <td class="text-center" name="id" value="{{ i.id }}" data-editable='false'>
+                                            <input type="checkbox"  name="selected" value="{{ i.id }}" class="i-checks">
+                                      </td>
+				      <td class="text-center">{{forloop.counter}}</td>
+	          <td class="text-center"><a href="{% url 'host_details' i.id%}">{{ i.hostname |default_if_none:""}}</a></td>
+                                      <td class="text-center">{{ i.ip |default_if_none:"" }}</td>
+				      <td class="text-center">{{ i.hostgroup.all | hostgroup_str}}</td>
+                                      <td class="text-center">
+					      {% for k,v in asset_type%}
+					         {% if k == i.asset_type%}
+					             {{ v | default_if_none:""}}
+					         {%endif%}
+				              {%endfor%}
+				      </td>
+                                      <td class="text-center">{{ i.system_type|default_if_none:"" }}</td>
+				      {% if i.status == 0 %}
+				         <td class="text-center"><span class="label label-important">禁用</span></td>
+				      {%else%}
+				      <td class="text-center">
+				      <span class="label label-info"> 
+					   <span data-toggle="tooltip" title="Some tooltip text!">正常
+					   </span>
+				      </span>
+			              </td>
+				      {%endif%}
+				      <td class="text-center">{{ i.date_added | date:"Y-m-d H:i:s"}}</td>
+				      <td class="text-center"  class="host_buttom">
+		<a class="btn btn-warning btn-xs"  href="{%url 'aedit' i.id%}">修改</a>
+		<a class="btn btn-danger btn-xs"   href="{%url 'mddel' i.id %}" onclick="return confirm('是否确认删除？')">删除</a>
+                                       </td>
+                                  </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                   {% include "common/paginator.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    var check_array = [];
+    $('#del_btn').click(function(){
+        $(".gradeX input:checked").each(function() {check_array.push($(this).attr("value")) });
+        $(".gradeX input:checked").closest("tr").remove();
+	all_id = check_array.join(",");
+	if (all_id == ''){
+           alert("不能为空,请选择一行!");
+	   return false;
+	}
+        if (confirm("确定删除?")) {
+            $.get("{% url 'mdel'%}",
+                    {ids: check_array.join(",")},
+                    function(data){
+                        window.open("{% url 'alist'%}","_self");
+                    }
+            )
+	    }else{
+	        window.open("{% url 'alist'%}","_self");
+	    }
+    })
+});
+
+$(document).ready(function(){
+  var check_array = [];
+  $('#host_update').click(function () {
+	  $(".gradeX input:checked").each(function() {check_array.push($(this).attr("value")) });
+	  $(".gradeX input:checked").closest("tr").remove();
+	  all_id = check_array.join(",");
+	  if (all_id == ''){
+	     alert("不能为空,请选择一行!");
+	     return false;
+	  }
+          layer.msg('正在更新中,等待10秒...',{time: 200000});
+	  $.post("{% url 'host_update' %}",{ids:check_array.join(",")},
+	  function(data){
+               alert("状态:  " + data);
+	       parent.location.reload();
+         })
+  })
+});
+
+//var str = "这个是测试用的范例文字";
+//var seq = 0;
+//var second=1000; //间隔时间1秒钟
+//function scroll() {
+//msg = str.substring(0, seq+1);
+//document.getElementByIdx_x_x('word').innerHTML = msg;
+//seq++;
+//if (seq >= str.length) seq = 0;
+//}
+
+//var x = function() {
+//   $.get("{% url 'status_check'%}",
+//	{ids:"status"},
+//       function(data){
+//	    var ret = data;
+//       })
+//   return "正常";
+//};
+//document.getElementById("demo").innerHTML = x();
+//
+//function load(){
+// return "1";
+//}
+
+</script>
+{% endblock %}
